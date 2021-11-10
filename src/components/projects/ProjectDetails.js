@@ -14,7 +14,7 @@ class ProjectDetails extends Component {
 
     getSingleProject = () => {
         const { params } = this.props.match;
-        axios.get(`http://localhost:5000/api/projects/${params.id}`)
+        axios.get(`http://localhost:5000/api/projects/${params.id}`, { withCredentials: true })
             .then(responseFromApi => {
                 const theProject = responseFromApi.data;
                 this.setState(theProject);
@@ -51,6 +51,21 @@ class ProjectDetails extends Component {
         }
     }
 
+    ownershipCheck = (project) => {
+        const currentUserIsOwner =
+          this.props.user && (project.owner === this.props.user._id);
+     
+        if (currentUserIsOwner) {
+          return (
+            <div>
+              <button onClick={() => this.deleteProject(this.state._id)}>
+                Delete project
+              </button>
+            </div>
+          );
+        }
+      };
+
 
 
 
@@ -59,6 +74,7 @@ class ProjectDetails extends Component {
           <div>
             <h1>{this.state.title}</h1>
             <p>{this.state.description}</p>
+            <div> {this.ownershipCheck(this.state)} </div>
             {/* show the task heading only if there are tasks */}
             {this.state.tasks && this.state.tasks.length > 0 && <h3>Tasks </h3>}
             {/* map through the array of tasks and... */}
